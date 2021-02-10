@@ -2,6 +2,16 @@
 title: "My Homepage"
 author: "Paulina Murray"
 date: "February 2021"
-output: html_document
+output: 
+  prettydoc::html_pretty:
+      theme: cayman
+      highlight: github
 ---
 
+### Homework Assignments
+
+#### Week 1: **Nothing due**
+
+#### Week 2: **Nothing due**
+
+#### Week 3: [Homework 2 Answers](Homework_02.html)
