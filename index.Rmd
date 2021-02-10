@@ -1,5 +1,5 @@
 ---
-title: "My Homepage"
+title: "My Course Homepage"
 author: "Paulina Murray"
 date: "February 2021"
 output: 
