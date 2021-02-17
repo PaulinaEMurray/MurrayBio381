@@ -10,8 +10,7 @@ output:
 
 ### Homework Assignments
 
-#### Week 1: **Nothing due**
 
-#### Week 2: **Nothing due**
+#### Feb. 10: [Homework 2 Answers](Homework_02.html)
 
-#### Week 3: [Homework 2 Answers](Homework_02.html)
+#### Feb. 17: [Homework 3 Answers](Homework_03.html)

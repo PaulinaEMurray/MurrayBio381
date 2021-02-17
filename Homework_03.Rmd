@@ -1,0 +1,56 @@
+---
+title: "Homework3"
+author: "Paulina Murray"
+date: "2/17/2021"
+output: html_document
+---
+
+1. 
+```
+FIND: \s{2,}
+REPLACE: ,
+```
+I searched for 2 or more consecutive spaces and replaced them with a comma.
+
+
+2.
+```
+FIND: (\w+),\s(\w+),\s(\w*.*)
+REPLACE: \2 \1 (\3)
+```
+I captured first word, the second word, and the final words + "all the rest" and replaced them in the order of 2,1, and 3.
+
+3.
+```
+FIND: \s(\d)
+REPLACE: \n\1
+```
+I searched for all spaces that are followed by a number and replaced them with a line break followed by the first capture.
+
+4.
+```
+FIND: (\d{4})\s(\w*\s\w*)(.*)
+REPLACE: \2_\1\3
+```
+I captured all 4 digit numbers, the song titles, and "all the rest" and replaced them in the order 2_,1, and 3. This did not give me the desired result because one song has a different amount of words in the title.
+
+5.
+```
+FIND: (\w)(\w+),\w+,\d+.\d(.*)
+REPLACE: \1_\2\3
+```
+I captured the first letter of the first word, added (_), then captured the rest of the first word and captured the last numbers.
+
+6.
+```
+FIND: (\w)(\w{4})\w+,\w+,\d+.\d(.*)
+REPLACE: \1_\2\3
+```
+I captured the first letter of the first word, captured the next 4 letters in the firs word, and captured the last numbers.
+
+7.
+```
+FIND: (\w{3})\w+,(\w{3})\w+,(\d+.\d),(.*)
+REPLACE: \1\2, \3, \4
+```
+I captured the first 3 numbers of the first and second words, captured the numbers and replaced them in the order of 1,2, 3, and 4 with spaces between the numbers.
