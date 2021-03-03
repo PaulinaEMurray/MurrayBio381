@@ -1,0 +1,99 @@
+---
+title: "Homework_5"
+author: "Paulina Murray"
+date: "3/3/2021"
+output: html_document
+---
+
+1.
+```{r}
+
+x <- 1.1
+a <- 2.2
+b <- 3.3
+
+# a
+z <- x^a^b
+z
+
+# b
+z <- (x^a)^b
+z
+
+# c
+z <- 3*x^3+2*x^2+1
+z
+
+```
+
+2.
+```{r}
+
+# a
+my_seq <- c(1:8, 7:1)
+
+# b
+
+my_vec <- 1:5
+rep(x=my_vec, times=my_vec)
+
+# c
+new_seq <- c(5,rep(4,2), rep(3,3), rep(2,4),rep(1,5))
+new_seq
+
+```
+
+3.
+```{r}
+
+ran_vec <- runif(2)
+
+x <- -ran_vec[1]*acos(ran_vec[2])
+
+y <- -ran_vec[1]*asin(ran_vec[2])
+
+x
+y
+
+
+```
+
+4.
+```{r}
+
+queue <- c("sheep", "fox", "owl", "ant")
+
+# a
+queue <- c(queue, "serpent")
+
+# b
+queue <- queue[-1]
+
+# c
+queue <- c("donkey", queue)
+
+#  d
+queue <- queue[-6]
+
+# e
+queue <- queue[-4]
+
+# f
+
+queue <- append(queue, "aphid", after = 3)
+
+# g
+
+which(queue == "aphid")
+
+```
+
+5.
+```{r}
+
+vec <- 1:100
+vec[which(vec%%2!=0 & vec%%3!=0 & vec%%7!=0)]
+
+```
+
+

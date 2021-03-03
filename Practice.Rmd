@@ -1,0 +1,61 @@
+---
+title: "Practice"
+author: "Paulina Murray"
+date: "2/26/2021"
+output:
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Headers
+## More Headers
+
+Regular text
+
+*italic*
+**bold**
+~subscript~
+^superscript^
+~~strikethrough~~ 
+
+
+
+
+
+
+
+
+
+```{r cars, echo =FALSE}
+summary(cars)
+
+a <- mean(cars$speed)
+# e <- x*2
+
+```
+
+
+`r a`
+
+
+```{r regression, echo=FALSE}
+library(dplyr)
+s <- table(head(iris))
+s
+```
+
+
+
+
+Tables
+
+First Column | Second Column
+-------------|--------------
+Content      | Contents
+2            | 3
+
+
