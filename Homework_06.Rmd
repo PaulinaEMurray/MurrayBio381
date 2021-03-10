@@ -1,0 +1,81 @@
+---
+title: "Homework_06"
+author: "Paulina Murray"
+date: "3/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1.
+```{r}
+n_dims <- sample(3:10,1)
+
+my_vec <- seq(1:(n_dims^2))
+my_vec <- sample(my_vec)
+
+my_mat <- matrix(data = my_vec, nrow = sqrt(length(my_vec)))
+print(my_mat)
+
+my_mat_t <- t(my_mat)
+print(my_mat_t)
+
+my_sum <- sum(my_mat_t[1,])
+my_mean <- mean(my_mat_t[,1])
+print(my_sum)
+print(my_mean)
+
+
+
+my_eigen <- eigen(my_mat_t)
+my_eigen$values
+my_eigen$vectors
+
+# these are numerical data
+
+typeof(my_eigen)
+typeof(my_eigen$values)
+typeof(my_eigen$vectors)
+
+```
+
+2.
+```{r}
+
+my_matrix <- matrix(data=runif(16),nrow = 4, ncol = 4)
+
+my_logical <- (rnorm(100) >1)
+print(my_logical)
+
+my_letters <- sample(letters)
+
+my_list <- list(my_matrix[2,2], my_logical[2], my_letters[2])
+
+typeof(my_list[[1]])
+typeof(my_list[[2]])
+typeof(my_list[[3]])
+
+new_list <- c(my_list[[1]],my_list[[2]],my_list[[3]])
+typeof(new_list)
+
+```
+
+3.
+```{r}
+
+my_unis <- runif(26,0,10)
+my_letters<- sample(LETTERS[1:26])
+
+my_dframe <- data.frame(my_unis,my_letters)
+
+my_unis[sample(1:26,4)] <- NA
+
+which(!complete.cases(my_unis))
+
+sort(my_letters)
+mean(my_unis, na.rm=TRUE)
+
+```
+
