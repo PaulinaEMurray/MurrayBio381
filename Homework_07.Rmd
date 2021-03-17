@@ -1,0 +1,136 @@
+---
+title: "Homework_07"
+author: "Paulina Murray"
+date: "3/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2) # for graphics
+library(MASS) # for maximum likelihood estimation
+library(tidyverse) # for tidying my data
+library(dplyr)
+library(tidyr)
+library(stringr)
+```
+
+```{r}
+# reading enzyme data into R
+z <- read.table("SCG_Enzymes.csv",header=TRUE,sep=",", stringsAsFactors=FALSE)
+str(z)
+summary(z)
+
+# cleaning my data
+
+## add columns treatment and sample type
+treatment <- c("Quarter Gap", "Quarter Gap", "Thinning Matrix", "Thinning Matrix", "Acre Gap", "Acre Gap", "Acre Gap", "Thinning Matrix", "Quarter Gap", "Control", "Control", "Control")
+sample_type <- c("soil","soil","soil","soil","soil","soil","soil","soil","soil","soil","soil","soil","wood","wood","wood","wood","wood","wood","wood","wood","wood","wood","wood","wood")
+z$treatment <- treatment
+z$sample_type <- sample_type
+
+z$treatment <- factor(z$treatment, levels = c("Control", "Thinning Matrix", "Quarter Gap", "Acre Gap"))
+
+## gather = makes "wide" data "long"
+## gather(data, key, measurement, arguments to include)
+z <- tidyr::gather(z, enzyme, activity, BG:LAP)
+
+## consolidating data
+z$sample_ID <- str_remove_all(z$sample_ID, "[SW]") # dropping "S/W" distinction
+z$sample_ID <- as.factor(z$sample_ID) # converting data
+z$enzyme <- as.factor(z$enzyme)
+z$enzyme <- droplevels(z$enzyme)
+
+# subsetting soil samples from original data
+#z <- subset(z,sample_type == "soil")
+
+# subsetting activities from one enzyme
+#z <- subset(z,enzyme == "BG")
+
+```
+
+```{r}
+# quick and dirty, a truncated normal distribution to work on the solution set
+
+# z <- rnorm(n=3000,mean=0.2)
+# z <- data.frame(1:3000,z)
+# names(z) <- list("ID","myVar")
+# z <- z[z$myVar>0,]
+# str(z)
+# summary(z$myVar)
+```
+
+```{r}
+# histogram of enzymatic activities in soil 7 enzymes
+p1 <- ggplot(data=z, aes(x=activity)) +
+  geom_histogram(aes(stat="identity"),color="grey60",fill="cornsilk",size=0.2)
+print(p1)
+```
+
+```{r}
+p1 <-  p1 +  geom_density(linetype="dotted",size=0.75)
+print(p1)
+```
+
+```{r}
+normPars <- fitdistr(z$activity,"normal")
+print(normPars)
+str(normPars)
+normPars$estimate["mean"] # note structure of getting a named attribute
+```
+
+```{r}
+meanML <- normPars$estimate["mean"]
+sdML <- normPars$estimate["sd"]
+
+xval <- seq(0,max(z$activity),len=length(z$activity))
+
+ stat <- stat_function(aes(x = xval, y = ..y..), fun = dnorm, colour="red", n = length(z$activity), args = list(mean = meanML, sd = sdML))
+ p1 + stat
+```
+
+```{r}
+expoPars <- fitdistr(z$activity,"exponential")
+rateML <- expoPars$estimate["rate"]
+
+stat2 <- stat_function(aes(x = xval, y = ..y..), fun = dexp, colour="blue", n = length(z$activity), args = list(rate=rateML))
+ p1 + stat + stat2
+```
+
+```{r}
+stat3 <- stat_function(aes(x = xval, y = ..y..), fun = dunif, colour="darkgreen", n = length(z$activity), args = list(min=min(z$activity), max=max(z$activity)))
+ p1 + stat + stat2 + stat3
+```
+
+```{r}
+
+z$activity <- ifelse(z$activity == 0, 1, z$activity) # remove zeros for gamma
+
+gammaPars <- fitdistr(z$activity,"gamma")
+shapeML <- gammaPars$estimate["shape"]
+rateML <- gammaPars$estimate["rate"]
+
+stat4 <- stat_function(aes(x = xval, y = ..y..), fun = dgamma, colour="brown", n = length(z$activity), args = list(shape=shapeML, rate=rateML))
+ p1 + stat + stat2 + stat3 + stat4
+```
+
+```{r}
+pSpecial <- ggplot(data=z, aes(x=activity/(max(activity + 0.1)), y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) + 
+  xlim(c(0,1)) +
+  geom_density(size=0.75,linetype="dotted")
+
+betaPars <- fitdistr(x=z$activity/max(z$activity + 0.1),start=list(shape1=1,shape2=2),"beta")
+shape1ML <- betaPars$estimate["shape1"]
+shape2ML <- betaPars$estimate["shape2"]
+
+statSpecial <- stat_function(aes(x = activity, y = sample_ID), fun = dbeta, colour="orchid", n = length(z$activity), args = list(shape1=shape1ML,shape2=shape2ML))
+pSpecial + statSpecial
+```
+
+I am using my data that i collected at the Second College Grant in New Hampshire. I collected wood and soil samples within different silvicultural forest management treatments and analyzed them for the activities of 7 different enzymes that are known to be related to carbon, nitrogen, and phosphorous cycling in forest ecosystems. 
+
+My data are not normal and heavily skewed towards zero which is very different from the normally distributed data we generated. I think the beta distribution best fit my data.
