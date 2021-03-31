@@ -1,0 +1,64 @@
+---
+title: "Homework_08"
+author: "Paulina Murray"
+date: "3/31/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+For Homework_08, I have created a fake dataset that represents the amount of extracellular enzymatic activity (EEA) found within different downed logs in a managed forest. My objective is to understand how moisture (VWC) affects EEA in deadwood. My hypothesis is that EEA will increase as moisture increases. 
+
+For my initial dataset, I have chosen a sample size of 100 for both EEA and moisture and a mean of 0.45 μmol h-1 g-1 for EEA and a mean of 30% for moisture. These data are similar to data that I collected in New Hampshire, however, my dataset had a much smaller sample size than 100 and I did not find significant results that would be able to accept my hypothesis, therefore I am curious to see how sample size and mean will impact my results, today.
+
+```{r}
+# preliminaries ------------------------------------
+library(ggplot2)
+
+# global variables ------------------------------------
+xCol <- rnorm(n=100,mean=0.45,sd=1) # xCol = extracellular enzymatic activity found in deadwood in a managed forest
+yCol <-  rnorm(n=100,mean=30,sd=1) # VWC (%) of deadwood
+
+# program body ------------------------------------
+
+df <- data.frame(xCol,yCol)
+reg_model <- lm(yCol~xCol,data=df)
+
+summary(reg_model)
+
+```
+
+I fit a linear model to my data a few times and noticed that my median residuals were typicaly very close to zero which would lead me to believe that the model was a pretty good fit. However, I also noticed that I continuously got a very small R-squared value that was basically zero. Lastly, my p-values were always > 0.05. 
+
+
+```{r}
+# global variables ------------------------------------
+xCol <- rnorm(n=100,mean=0.1,sd=1) # xCol = extracellular enzymatic activity found in deadwood in a managed forest
+yCol <-  rnorm(n=100,mean=40,sd=1) # VWC (%) of deadwood
+
+# program body ------------------------------------
+
+df <- data.frame(xCol,yCol)
+reg_model <- lm(yCol~xCol,data=df)
+
+summary(reg_model)
+```
+
+Here, I adjusted the means to have large differences between my two variables. This resulted in slightly higher residuals, R-squared values, and a higher p-value that was still > 0.05.
+
+```{r}
+# global variables ------------------------------------
+xCol <- rnorm(n=3000,mean=0.45,sd=1) # xCol = extracellular enzymatic activity found in deadwood in a managed forest
+yCol <-  rnorm(n=3000,mean=30,sd=1) # VWC (%) of deadwood
+
+# program body ------------------------------------
+
+df <- data.frame(xCol,yCol)
+reg_model <- lm(yCol~xCol,data=df)
+
+summary(reg_model)
+```
+
+The first time I got p > 0.05, was when I increased the sample size to 1500. However, even at n=3000, I still was not receiving consistent results that were p > 0.05. I conclude that, given the actual mean values I've collected in the field, I'd need at least 1500 samples to find a significant result (yikes!).
