@@ -1,0 +1,137 @@
+---
+title: "Homework_09"
+author: "Paulina Murray"
+date: "4/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+# preliminaries ------------------------------------
+library(ggplot2)
+
+# --------------------------------
+# FUNCTION: create_data
+# description: creating fake data set from last class
+# inputs: xCol and yCol
+# outputs: data frame of xCol and yCol
+##################################
+create_data <- function(xCol=runif(1000),
+                        yCol=runif(1000)) {
+  df <- data.frame(xCol,yCol)
+
+return(df)
+}# end of create_data
+# --------------------------------
+# create_data()
+
+# --------------------------------
+# FUNCTION: linear_model
+# description: fits linear model to data
+# inputs: x and y vectors of numeric; must be the same length
+# outputs: entire model summary from lm
+##################################
+linear_model <- function(xCol=runif(10),
+                         yCol=runif(10)) {
+  df <- data.frame(xCol,yCol)
+  reg_model <- lm(yCol~xCol,data=df)
+  
+return(summary(reg_model))
+
+}# end of linear_model
+# --------------------------------
+ #linear_model()
+
+# --------------------------------
+# FUNCTION: graph_results
+# description: graph the results of lm
+# inputs: x and y vectors of numeric value
+# outputs: graph
+##################################
+graph_results <- function(xCol=runif(10),
+                          yCol=runif(10)) {
+  df <- data.frame(xCol,yCol)
+  p1 <- qplot(data=df,
+              x=xCol,
+              y=yCol,
+              geom=c("smooth","point"))
+  print(p1)
+} # end of graph_results
+# --------------------------------
+# graph_results()
+
+my_data <- create_data() # creating fake dataset of length 1000
+
+my_linear_data <- linear_model(my_data) # fitting linear regression model to fake data set
+
+graph_results(my_data) # graphing fake dataset
+
+# Question #2. ------------------------------------
+
+# I will modify my code to run a simple correlation between yCol~xCol.
+
+# preliminaries ------------------------------------
+library(ggplot2)
+
+# --------------------------------
+# FUNCTION: create_data
+# description: creating fake data set from last class
+# inputs: xCol and yCol
+# outputs: data frame of xCol and yCol
+##################################
+create_data <- function(xCol=runif(1000),
+                        yCol=runif(1000)) {
+  df <- data.frame(xCol,yCol)
+
+return(df)
+}# end of create_data
+# --------------------------------
+# create_data()
+
+# --------------------------------
+# FUNCTION: cor_model
+# description: fits linear model to data
+# inputs: x and y vectors of numeric; must be the same length
+# outputs: entire model summary from lm
+##################################
+cor_model <- function(xCol=runif(10),
+                         yCol=runif(10)) {
+  df <- data.frame(xCol,yCol)
+  cor_data <- cor(df)
+  
+return(cor_data)
+
+}# end of linear_model
+# --------------------------------
+# cor_model()
+
+# --------------------------------
+# FUNCTION: graph_results
+# description: graph the results of lm
+# inputs: x and y vectors of numeric value
+# outputs: graph
+##################################
+graph_results <- function(xCol=runif(10),
+                          yCol=runif(10)) {
+  df <- data.frame(xCol,yCol)
+  p1 <- ggplot(data=df, aes(x=xCol,y=yCol)) +
+          geom_point()
+  print(p1)
+} # end of graph_results
+# --------------------------------
+# graph_results()
+
+my_new_data <- create_data() # creating fake data set
+
+my_cor_data <- cor_model(my_new_data) # completing a correlation on my_new_data
+
+graph_results(my_new_data) # creating a scatterplot of fake data
+
+
+
+```
+

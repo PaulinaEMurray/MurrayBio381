@@ -24,3 +24,5 @@ output:
 #### Mar. 17: [Homework 7 Answers](Homework_07.html)
 
 #### Mar. 31: [Homework 8 Answers](Homework_08.html)
+
+#### Apr. 7: [Homework 9 Answers](Homework_09.html)
