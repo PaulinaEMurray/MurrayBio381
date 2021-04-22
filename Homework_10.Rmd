@@ -1,0 +1,207 @@
+---
+title: "Homework_10"
+author: "Paulina Murray"
+date: "4/14/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Question 1}
+
+# --------------------------------
+# FUNCTION: zero_counter
+# description: count the number of zeroes in numeric vector
+# inputs: numeric vector
+# outputs: count of zeroes
+##################################
+zero_counter <- function(x=NULL) { # start of zero_counter
+  if(is.null(x)){ # start of if statement
+    x <- as.integer(rnorm(10,mean=1,sd=2)) # creates fake data
+    } # end of if statement
+  
+ counter <- 0
+
+  for(i in x){ # start of for loop
+  if(i == 0){ # start of if statement
+    counter <- counter + 1
+  } # end of if statement
+} # end of for loop
+return(counter)
+} # end of zero_counter
+# --------------------------------
+zero_counter()
+
+```
+
+```{r Question 2}
+x <- as.integer(rnorm(10,mean=1,sd=2)) # creating fake data
+
+y <- length(subset(x,x == 0)) # subsetting for x = 0
+y
+
+```
+
+```{r Question 3}
+
+# --------------------------------
+# FUNCTION: create_mat
+# description: creates a matrix of input x,y dim
+# inputs: two integers
+# outputs: a matrix of the given dimensions
+##################################
+create_mat <- function(row,col) { 
+  my_mat <- matrix(nrow=row,ncol=col) # creating matrix
+ 
+  for (i in 1:nrow(my_mat)) {
+    for (j in 1:ncol(my_mat)) {
+      my_mat[i,j] <- i*j 
+    }
+  }
+return(my_mat)
+}# end of create_mat
+# --------------------------------
+row <- sample(1:5,1) # random number generation
+col <- sample(1:5,1)
+
+create_mat(row,col)
+
+```
+
+```{r Question 4}
+
+# Preliminaries ------------------------------------
+
+library(ggplot2)
+set.seed(100)
+
+# my data = ID, x = activity data for BG enzyme (targets carbon), y = mean_temp
+
+# --------------------------------
+# FUNCTION: read_data
+# description: read/generate data
+# inputs: file name
+# outputs: 3 column data frame (ID,x,y)
+##################################
+read_data <- function(z=NULL) { # start of function
+  if(is.null(z)){
+                  xObs <- 1:20
+                  yObs <- xObs + 10*rnorm(20)
+                  df <- data.frame(ID=seq_along(xObs),xObs,yObs)
+  } # end of if statement
+
+  df <- read.table(file=z,row.names=1,header=TRUE,sep=",",stringsAsFactors=FALSE)
+
+
+return(df)
+  }# end of read_data
+# --------------------------------
+
+df <- read_data("HW10.csv")
+
+# --------------------------------
+# FUNCTION: calc_metric
+# description: calculate metric for randomization test
+# inputs: input_description
+# outputs: output_description
+##################################
+calc_metric <- function(z=NULL) {
+            if(is.null(z)) { # start of if statement
+              xObs <- 1:20
+                  yObs <-  xObs + 10*rnorm(20)
+                  z <- data.frame(ID=seq_along(xObs),xObs,yObs)
+                  } # end of if statement
+  
+. <- lm(z[,1]~z[,2])
+. <- summary(.)
+. <- .$coefficients[2,1]
+
+slope <- .
+return(slope)
+}# end of calc_metric
+# --------------------------------
+calc_metric(df) # rate of change in enzyme activity as temperature changes
+
+# --------------------------------
+# FUNCTION: shuffler
+# description: randomize data for regression
+# inputs: data frame with at least (x,y)
+# outputs: randomized data frame with at least (x,y)
+##################################
+shuffler <- function(z=NULL) { # start of function
+                  if(is.null(z)) { # start of if statement
+                    xObs <- 1:20
+                  yObs <- xObs + 3*rnorm(20)
+                  z <- data.frame(ID=seq_along(xObs),xObs,yObs)
+                  } # end of if statement
+  z[,2] <- sample(z[,2]) # use sample function with defaults to reshuffle column
+  return(z)
+}# end of shuffler
+# --------------------------------
+
+df1 <- shuffler(df) # newly randomized data set
+
+# --------------------------------
+# FUNCTION: get_pval
+# description: calculate pval
+# inputs: list of observed metric, and vector of simulated metrics
+# outputs: lower, upper tail probability values
+##################################
+get_pval <- function(z=NULL) { # start of function
+              if(is.null(z)) {# start of if statement 
+                      z <- list(xObs=runif(1),xSim=runif(1000))
+                      } # end of if statement
+                      pLower <- mean(z[[2]]<=z[[1]])
+                      pUpper <- mean(z[[2]]>=z[[1]])
+return(c(pL=pLower,pU=pUpper))
+                      } # end of get_pval
+# --------------------------------
+
+get_pval(df)
+
+# --------------------------------
+# FUNCTION: plot_sim
+# description: create ggplot histogram
+# inputs: list of observed metric and vector of simulated metrics
+# outputs: ggplot figure
+##################################
+plot_sim <- function(z=NULL) {
+  dF <- data.frame(ID=seq_along(z[[2]]),simX=z[[2]])
+p1 <- ggplot(data=dF,mapping=aes(x=simX))
+p1 + geom_histogram(mapping=aes(fill=I("goldenrod"),color=I("black"))) +
+geom_vline(aes(xintercept=z[[1]],col="blue")) 
+}# end of plot_sim
+# --------------------------------
+
+plot_sim(df1)
+
+# Program Body ------------------------------------
+
+nSim <- 1000 # number of simulations
+Xsim <- rep(NA,nSim) # vector of simulated slopes
+
+df <- read_data("HW10.csv")
+Xobs <- calc_metric(df)
+
+for (i in seq_len(nSim)) {
+Xsim[i] <- calc_metric(shuffler(df))
+}
+
+slopes <- list(Xobs,Xsim)
+get_pval(slopes)
+
+plot_sim(slopes)
+
+```
+
+```{r Question 5}
+
+my_data <- read.csv("HW10.csv")
+my_regression <- lm(my_data$y~my_data$x)
+summary(my_regression)
+
+```
+
+The lower p-value from the randomization test is 0.667 whereas the p-value from the standard test is 0.6142. 
