@@ -1,0 +1,159 @@
+---
+title: "Homework_11"
+author: "Paulina Murray"
+date: "5/16/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE}
+
+# preliminaries ------------------------------------
+library(tidyverse)
+library(vegan)
+library(TeachingDemos)
+char2seed('end of semester')
+
+# tidying data
+enz <- read.csv('SCG_Enzymes.csv')
+env <- read.csv('enzyme_env.csv')
+
+ID <- 1:24 # creating ID
+sample <- c(rep('soil',times=12),rep('wood',times=12)) # creating sample type
+enz <- cbind(enz,ID,sample,env) # creating df
+enz <- enz[,-1] 
+
+```
+
+```{r}
+##################################################
+# function: FileBuilder
+# create a set of random files for regression
+# input: fileN = number of files to create
+#       : fileFolder = name of folder for random files
+#       : fileSize = c(min,max) number of rows in file
+#       : fileNA = number on average of NA values per column
+# output: set of random files
+#------------------------------------------------- 
+FileBuilder <- function(fileN=10,
+                        fileFolder="RandomFiles/",
+                        fileSize=c(15,100),
+                        fileNA=3){
+for (i in seq_len(fileN)) {
+fileLength <- sample(fileSize[1]:fileSize[2],size=1) # get number of rows
+varX <- runif(fileLength) # create random x
+varY <- runif(fileLength) # create randon y
+dF <- data.frame(varX,varY) # bind into a data frame
+badVals <- rpois(n=1,lambda=fileNA) # determine NA number
+dF[sample(nrow(dF),size=badVals),1] <- NA # random NA in varX
+dF[sample(nrow(dF),size=badVals),2] <- NA # random NA in varY
+
+# create label for file name with padded zeroes
+fileLabel <- paste(fileFolder,
+                       "ranFile",
+                       formatC(i,
+                       width=3,
+                       format="d",
+                       flag="0"),
+                       ".csv",sep="")
+
+# set up data file and incorporate time stamp and minimal metadata
+write.table(cat("# Simulated random data file for batch processing","\n",
+                    "# timestamp: ",as.character(Sys.time()),"\n",
+                    "# PEM","\n",
+                    "# ------------------------", "\n",
+                    "\n",
+                    file=fileLabel,
+                    row.names="",
+                    col.names="",
+                    sep=""))
+
+# now add the data frame
+write.table(x=dF,
+            file=fileLabel,
+            sep=",",
+            row.names=FALSE,
+            append=TRUE)
+
+
+}
+}
+
+# --------------------------------
+# FUNCTION: reg_model
+# description: fits linear model, extracts stats
+# inputs: 2-col df
+# outputs: slope, p-value, r2
+##################################
+reg_model <- function(d=NULL) {
+             if(is.null(d)) {
+               xVar <- runif(10)
+               yVar <- runif(10)
+               d <- data.frame(xVar,yVar)
+             }
+  . <- lm(data=d,d[,2]~d[,1])
+  . <- summary(.)
+  statsList <- list(Slope=.$coefficients[2,1],
+                    pVal=.$coefficients[2,4],
+                    r2=.$r.squared)
+  return(statsList)
+  }# end of reg_model
+# --------------------------------
+
+# Global variables
+fileFolder <- "RandomFiles/"
+nFiles <- 100
+fileOut <- "StatsSummary.csv"
+
+# # Create 100 random data sets
+# dir.create(fileFolder)
+# FileBuilder(fileN=nFiles)
+ fileNames <- list.files(path=fileFolder)
+
+# Create data frame to hold file summary statistics
+ID <- seq_along(fileNames)
+fileName <- fileNames
+slope <- rep(NA,nFiles)
+pVal <- rep(NA,nFiles)
+r2 <- rep(NA,nFiles)
+
+statsOut <- data.frame(ID,fileName,slope,pVal,r2)
+
+# batch process by looping through individual files
+for (i in seq_along(fileNames)) {
+  data <- read.table(file=paste(fileFolder,fileNames[i],sep=""),
+                     sep=",",
+                     header=TRUE) # read in next data file
+  
+  dClean <- data[complete.cases(data),] # get clean cases
+  
+  . <- reg_model(dClean) # pull regression stats from clean file
+  statsOut[i,3:5] <- unlist(.) # unlist, copy into last 3 columns
+  
+}
+# set up output file and incorporate time stamp and minimal metadata
+  write.table(cat("# Summary stats for ",
+                    "batch processing of regression models","\n",
+                    "# timestamp: ",as.character(Sys.time()),"\n",
+                    "# PEM","\n",
+                    "# ------------------------", "\n",
+                    "\n",
+                    file=fileOut,
+                    row.names="",
+                    col.names="",
+                    sep=""))
+  
+# now add the data frame
+  write.table(x=statsOut,
+              file=fileOut,
+              row.names=FALSE,
+              col.names=TRUE,
+              sep=",",
+              append=TRUE)
+
+
+```
+
