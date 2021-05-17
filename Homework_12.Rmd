@@ -1,0 +1,65 @@
+---
+title: "Homework_12"
+author: "Paulina Murray"
+date: "5/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,message=FALSE}
+
+# preliminaries ------------------------------------
+
+library(ggplot2)
+library(ggthemes)
+library(patchwork)
+#library(colorblindr)
+library(cowplot)
+library(colorspace)
+library(wesanderson)
+library(ggsci)
+library(TeachingDemos)
+library(tidyr)
+
+char2seed('almost done')
+
+d <- iris
+```
+
+```{r}
+
+# Comparing iris petal length to width by species 
+p1 <- ggplot(d,aes(Petal.Width,Petal.Length,color=Species)) +
+  geom_point(size=4,shape=18,alpha=0.8) +
+  xlab('Petal Width') +
+  ylab('Petal Length') +
+  scale_color_viridis_d(option='plasma') + 
+  theme_cowplot() + 
+  theme(legend.position="none",text=element_text(family="Times")) # remove legend
+print(p1) # having fun with shapes, colors, fonts and more!
+
+# Comparing iris sepal length to width by species 
+p2 <- ggplot(d,aes(Sepal.Width,Sepal.Length,color=Species)) +
+  geom_point(size=4,shape=18,alpha=0.8) +
+  xlab('Sepal Width') +
+  ylab('Sepal Length') +
+  scale_color_viridis_d(option='plasma') +
+  theme_cowplot() +
+  theme(text=element_text(family="Times"))
+print(p2)
+
+# visualizing both figures next to eachother
+p1 + p2 + plot_annotation(title='Exploring the Iris Package',
+                          tag_levels = 'a')
+
+# faceting
+p3 <- p1 + facet_grid(.~Species)
+p4 <- p2 + facet_grid(.~Species)
+
+p3 + p4 
+
+```
+
